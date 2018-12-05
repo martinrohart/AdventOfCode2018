@@ -20,8 +20,5 @@ def react(input):
 print react(input)
 
 #Part 2
-results = []
-for char in string.ascii_lowercase:
-	filtered = list(filter(lambda x : x != char and x != char.upper() , input))
-	results.append(react(filtered))
+results = map(lambda char: react( list(filter(lambda x : x != char and x != char.upper() , input))), string.ascii_lowercase)
 print np.min(results)
