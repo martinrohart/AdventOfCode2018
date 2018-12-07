@@ -1,5 +1,5 @@
 import re
-import string
+import numpy as np
 from collections import defaultdict
 
 pattern = re.compile(r'Step\s([A-Z]).*step\s([A-Z])')
@@ -16,38 +16,22 @@ for pair in data:
 
 steps = []
 while len(remaining.keys())>0:
-	found = []
-	for letter in remaining.keys():
-		if not(letter in precedents):
-			found.append(letter)
-
+	found = [l for l in remaining.keys() if not(precedents[l]) ]
 	found.sort()
+
 	steps.append(found[0])
 	del remaining[found[0]]
+
 	for key in precedents.keys():
-		if found[0] in precedents[key]:
-			precedents[key].remove(found[0])
-			if len(precedents[key])==0:
-				del precedents[key]
+		precedents[key] = [l for l in (precedents[key]) if l!=found[0] ]
 
 print ''.join(steps)
 
 #Part 2
-def getNextStep():
-	if steps:
-		for step in steps:
-			ok = True
-			for precedent in precedents[step]:
-				if not precedent in completed:
-					ok = False
-					break
-			if ok:
-				steps.remove(step)
-				return step
 
 times = {}
-for letter in string.ascii_uppercase:
-	times[letter] = ord(letter)-64+60
+for step in steps:
+	times[step] = ord(step)-64+60
 
 time = 0
 workers = 5
@@ -55,15 +39,22 @@ working = []
 workingOn = []
 completed = []
 
+def getNextStep():
+	for step in steps:
+		blocking = [l for l in precedents[step] if not l in completed]
+		if not blocking:
+			steps.remove(step)
+			return step
+			
 precedents = defaultdict(list)
 for pair in data:
 	precedents[pair[1]].append(pair[0])
 
 while steps:
-	while len(working)>0 and min(working)==time:
+	while working and min(working)==time:
 		step = workingOn[np.argmin(working)]
 		completed.append(step)
-		print "Step %s completed at %s" % (step,str(time))
+		#print "Step %s completed at %s" % (step,str(time))
 		workingOn.remove(step)
 		working.remove(min(working))
 		workers+=1
@@ -71,7 +62,7 @@ while steps:
 	for worker in range(workers):
 		step = getNextStep()
 		if step:
-			print "Worker starts %s at %s" % (step, str(time))
+			#print "Worker starts %s at %s" % (step, str(time))
 			stepTime = times[step]
 			working.append( time + stepTime)
 			workingOn.append(step)
