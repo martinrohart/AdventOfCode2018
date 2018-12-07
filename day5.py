@@ -1,5 +1,6 @@
-import string
+import re
 import numpy as np
+from collections import defaultdict
 
 with open ("input5.txt", "r") as file:
 	input=list(file.read().strip())
@@ -20,5 +21,5 @@ def react(input):
 print react(input)
 
 #Part 2
-results = map(lambda char: react( list(filter(lambda x : x != char and x != char.upper() , input))), string.ascii_lowercase)
+results = map(lambda char: react( filter(lambda x : x != char and x != char.upper() , input)), string.ascii_lowercase)
 print np.min(results)

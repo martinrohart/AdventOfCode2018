@@ -3,16 +3,16 @@ import numpy as np
 from collections import defaultdict
 
 with open ("input6.txt", "r") as file:
-	rows=file.read().strip().split('\n')
+	rows = file.read().strip().split('\n')
 
 pattern = re.compile(r'(\d+),\s(\d+)')
-rows = map(lambda row: map(lambda x: int(x) ,pattern.match(row).groups()), rows)
-temp = np.transpose(rows)
+data = map(lambda row: map(int ,pattern.match(row).groups()), rows)
+temp = np.transpose(data)
 maxx = max(temp[0])
 maxy = max(temp[1])
 
 def getClosest(x,y):
-	distances = [abs(rows[j][0]-x) + abs(rows[j][1]-y) for j in range(len(rows))]
+	distances = [abs(data[j][0]-x) + abs(data[j][1]-y) for j in range(len(data))]
 	minimum = min(distances)
 	if(len(np.where(distances == minimum))>1):
 		return "."
@@ -33,19 +33,13 @@ def part1():
 
 	return max(areas.values())
 
-def sumDistances(x,y):
-	sum = 0
-	for row in rows:
-		sum += abs(row[0]-x) + abs(row[1]-y) 
-	return sum
-
-def part2(minimum):
+def part2():
 	result = 0
-	for i in range(maxx):
-		for j in range(maxy):
-			if sumDistances(i, j)<minimum:
+	for x in range(maxx):
+		for y in range(maxy):
+			if np.sum(map(lambda row: abs(row[0]-x) + abs(row[1]-y) ,data)) < 10000:
 				result += 1
 	return result
 
 print part1()
-print part2(10000)
+print part2()

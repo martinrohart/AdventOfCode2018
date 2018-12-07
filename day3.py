@@ -8,7 +8,7 @@ pattern = re.compile(r'#(\d+)\s@\s(\d+),(\d+):\s(\d+)x(\d+)')
 
 rectangles = map(lambda s: pattern.match(s).groups(),strings)
 
-fabric = [[0 for j in range(1500)] for i in range(1500)]
+fabric = [[0 for j in range(1000)] for i in range(1000)]
 shared = 0
 
 for rectangle in rectangles:
