@@ -1,6 +1,5 @@
 import re
 import numpy as np
-from collections import defaultdict
 
 pattern = re.compile(r'(-?\d+)')
 
@@ -18,7 +17,7 @@ def getArea(temp):
 
 def printSky():
 	xmin,xmax,ymin,ymax = getArea(data)
-	sky = [['.' for i in range(xmin,xmax+1)] for j in range(ymin, ymax+1)]
+	sky = [[' ' for i in range(xmin,xmax+1)] for j in range(ymin, ymax+1)]
 	for i in range(len(data)):
 		sky[data[i][1]-ymin][data[i][0]-xmin] = '#'
 	
