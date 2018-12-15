@@ -33,7 +33,7 @@ for y in range(len(lines)):
 		elif c=='>' or c=='<':
 			lines[y][x] = '-'
 
-while True:
+while len(carts)>1:
 	carts = sorted(carts, key=itemgetter(1,0))
 	crashed = []
 	for c in range(len(carts)):
@@ -66,11 +66,10 @@ while True:
 		for c2 in range(len(carts)):
 			if c2!=c:
 				if carts[c2][0]==carts[c][0] and carts[c2][1]==carts[c][1]:
-					print "collision at %s,%s" % (carts[c][0], carts[c][1])
+					print "Collision at %s,%s" % (carts[c][0], carts[c][1])
 					crashed.append(c)
 					crashed.append(c2)
 	if crashed:
 		carts = [carts[i] for i in range(len(carts)) if not i in crashed]
-	if len(carts)==1:
-		print "Last cart at %s,%s" % (carts[0][0], carts[0][1])
-		quit()
+
+print "Last cart at %s,%s" % (carts[0][0], carts[0][1])

@@ -8,10 +8,7 @@ threes = 0
 for id in ids:
 	keys = {}
 	for letter in list(id):
-		if letter in keys:
-			keys[letter] = keys[letter] + 1
-		else:
-			keys[letter] = 1
+		keys[letter] = (keys[letter]+1) if (letter in keys) else 1
 
 	if(2 in keys.values()):
 		twos+=1
@@ -25,10 +22,10 @@ from itertools import combinations
 for pair in list(combinations(ids,2)):
 	letters1 = list(pair[0])
 	letters2 = list(pair[1])
-	same=""
+	same = ""
 	for i in range(len(letters1)):
 		if(letters1[i]==letters2[i]):
-			same=same+letters1[i]
+			same = same+letters1[i]
 	if len(same)==len(letters1)-1:
 		print "common letters in most similar IDs: "+same
 
