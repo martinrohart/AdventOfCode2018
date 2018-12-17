@@ -5,20 +5,9 @@ from collections import deque
 with open ("input15.txt", "r") as file:
 	lines = file.read().strip().split('\n')
 
-grid = map(lambda line: [str(c) for c in line] , lines)
-targets = []
-for y in range(len(grid)):
-	for x in range(len(grid[y])):
-		if grid[y][x]=='G' or grid[y][x]=='E':
-			targets.append((x,y,grid[y][x],200,3))
-targets = sorted(targets, key=itemgetter(1,0))
-
 def printGrid(grid):
 	for line in grid:
 		print ''.join(line)
-def printWorld(world):
-	for line in world:
-		print line
 
 def possible_paths(coor):
     # This function checks the 4 available routes around the current point.
@@ -107,45 +96,73 @@ def sumPointsUnits(targets):
 	targets = filter(lambda t: t[3]>0,targets)
 	return sum([t[3] for t in targets])
 
-turn=1
-printGrid(grid)
-while True:
-	print "Turn %s:" % str(turn)
-	for t in range(len(targets)):
-		target = targets[t]
-		if target[3]<=0:
-			continue
-		if endOfGame(targets):
-			points = sumPointsUnits(targets)
-			print "END %s, %s: result %s" % (turn-1, points, points*(turn-1) )
-			quit()
-
-		enemy = getEnemy(target)
-		if not enemy:
-			if target[2] == 'E':
-				tofind = 'G'
-			else:
-				tofind = 'E'
-			closest, step, distance = find_closest_target( (target[0], target[1]), tofind)
-			if step:
-				print "Move %s to %s" % (str(target), str(step))
-				grid[target[1]][target[0]] = '.'
-				target = (step[0], step[1], target[2], target[3], target[4])
-				grid[step[1]][step[0]] = target[2]
-				targets[t] = target
-				enemy = getEnemy(target)
-		if enemy:
-			enemy = (enemy[0], enemy[1], enemy[2], enemy[3] - target[4], enemy[4])
-			print "Enemy attacked %s" % str(enemy)
-			for e in range(len(targets)):
-				if targets[e][0]==enemy[0] and targets[e][1]==enemy[1]:
-					targets[e] = enemy
-					break
-			if enemy[3]<=0:
-				print "Enemy died"
-				grid[enemy[1]][enemy[0]] = '.'
-	targets = filter(lambda t: t[3]>0,targets)
+def init(attackPower):
+	grid = map(lambda line: [str(c) for c in line] , lines)
+	targets = []
+	for y in range(len(grid)):
+		for x in range(len(grid[y])):
+			if grid[y][x]=='G':
+				targets.append((x,y,grid[y][x],200,3))
+			elif grid[y][x]=='E':
+				targets.append((x,y,grid[y][x],200,attackPower))
 	targets = sorted(targets, key=itemgetter(1,0))
-	print targets
-	turn+=1
-	printGrid(grid)
+	return grid, targets
+
+def play(absoluteWin):
+	global grid
+	global targets
+	turn=1
+	while True:
+		#print "Turn %s:" % str(turn)
+		for t in range(len(targets)):
+			target = targets[t]
+			if target[3]<=0:
+				continue
+			if endOfGame(targets):
+				points = sumPointsUnits(targets)
+				print "END %s, %s: result %s" % (turn-1, points, points*(turn-1) )
+				return True
+
+			enemy = getEnemy(target)
+			if not enemy:
+				if target[2] == 'E':
+					tofind = 'G'
+				else:
+					tofind = 'E'
+				closest, step, distance = find_closest_target( (target[0], target[1]), tofind)
+				if step:
+					#print "Move %s to %s" % (str(target), str(step))
+					grid[target[1]][target[0]] = '.'
+					target = (step[0], step[1], target[2], target[3], target[4])
+					grid[step[1]][step[0]] = target[2]
+					targets[t] = target
+					enemy = getEnemy(target)
+			if enemy:
+				enemy = (enemy[0], enemy[1], enemy[2], enemy[3] - target[4], enemy[4])
+				#print "Enemy attacked %s" % str(enemy)
+				for e in range(len(targets)):
+					if targets[e][0]==enemy[0] and targets[e][1]==enemy[1]:
+						targets[e] = enemy
+						break
+				if enemy[3]<=0:
+					#print "Enemy died"
+					grid[enemy[1]][enemy[0]] = '.'
+					if absoluteWin and enemy[2]=='E':
+						return False
+		targets = filter(lambda t: t[3]>0,targets)
+		targets = sorted(targets, key=itemgetter(1,0))
+		turn+=1
+		#printGrid(grid)
+
+#Part 1
+attackPower = 3
+grid, targets = init(attackPower)
+play(False)
+
+#Part2
+while True:
+	attackPower+=1
+	grid, targets = init(attackPower)
+	if play(True):
+		print "Attack power needed: %s" % str(attackPower)
+		break
