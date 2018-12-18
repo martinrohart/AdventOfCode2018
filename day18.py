@@ -1,7 +1,3 @@
-import re
-
-pattern = re.compile(r'(\d+)')
-
 with open ("input18.txt", "r") as file:
 	grid = map(lambda l: list(l), file.read().split('\n'))
 
@@ -10,9 +6,7 @@ def printGrid(grid):
 		print ''.join(line)
 
 def getCell(y,x):
-	if y<0 or x<0 or y>=len(grid) or x>=len(grid[0]):
-		return None
-	return grid[y][x]
+	return None if (y<0 or x<0 or y>=len(grid) or x>=len(grid[0])) else grid[y][x]
 
 def getAdjacents(x,y):
 	return [getCell(y-1,x-1), getCell(y-1,x), getCell(y-1,x+1), getCell(y,x-1), getCell(y,x+1), getCell(y+1,x-1), getCell(y+1,x), getCell(y+1,x+1) ]
@@ -40,9 +34,7 @@ def iteration():
 for minute in range(1,11):
 	grid = iteration()
 
-lumbers = sum(map(lambda row: len(filter(lambda c: c=='#',row)), grid))
-trees = sum(map(lambda row: len(filter(lambda c: c=='|',row)), grid))
-print lumbers*trees
+print sum(row.count('#') for row in grid) * sum(row.count('|') for row in grid)
 
 #Part 2
 seen = {}
@@ -56,9 +48,7 @@ while True:
 				interval = minute-start
 				check = start + (1000000000-start) % interval
 				print "Repetition interval: %s -> Grid at 1000000000 is the same than grid at %s" % (interval, check)
-				lumbers = sum(map(lambda row: len(filter(lambda c: c=='#',row)), seen[check]))
-				trees = sum(map(lambda row: len(filter(lambda c: c=='|',row)), seen[check]))
-				print lumbers*trees
+				print sum(row.count('#') for row in seen[check]) * sum(row.count('|') for row in seen[check])
 				quit()
 			else:
 				print "Pattern repeats at %s" % str(minute)
