@@ -45,11 +45,6 @@ trees = sum(map(lambda row: len(filter(lambda c: c=='|',row)), grid))
 print lumbers*trees
 
 #Part 2
-#Wait for the pattern to stabilize
-while minute<1000:
-	minute+=1
-	grid = iteration()
-
 seen = {}
 start = 0
 while True:
@@ -60,7 +55,7 @@ while True:
 			if start>0:
 				interval = minute-start
 				check = start + (1000000000-start) % interval
-				print "Grid at 1000000000 is the same than grid at %s" % check
+				print "Repetition interval: %s -> Grid at 1000000000 is the same than grid at %s" % (interval, check)
 				lumbers = sum(map(lambda row: len(filter(lambda c: c=='#',row)), seen[check]))
 				trees = sum(map(lambda row: len(filter(lambda c: c=='|',row)), seen[check]))
 				print lumbers*trees
