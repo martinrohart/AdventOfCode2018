@@ -34,17 +34,14 @@ def getHorizontalRange(x,y):
 	while left==None and current>=0:
 		if grid[y][current]=='#':
 			left = current
-		elif (grid[y][current]=='.' or grid[y][current]=='|') and (grid[y+1][current]=='#' or grid[y+1][current]=='~'):
-			current-=1
-		elif (grid[y][current]=='.' or grid[y][current]=='|') and grid[y+1][current]=='.':
+		elif grid[y+1][current]=='.':
 			leftFall = current
 			break
-		elif (grid[y][current]=='.' or grid[y][current]=='|') and grid[y+1][current]=='|':
+		elif grid[y+1][current]=='|':
 			grid[y][x]='|'
 			return None,None,None,None
 		else:
-			print "why %s,%s" % (str(current), str(y))
-			quit()
+			current-=1
 
 	current = x+1
 	right = None
@@ -52,20 +49,17 @@ def getHorizontalRange(x,y):
 	while right==None and current<= (max(coordsx)+1):
 		if grid[y][current]=='#':
 			right = current
-		elif (grid[y][current]=='.' or grid[y][current]=='|') and (grid[y+1][current]=='#' or grid[y+1][current]=='~'):
-			current+=1
-		elif (grid[y][current]=='.' or grid[y][current]=='|') and grid[y+1][current]=='.':
+		elif grid[y+1][current]=='.':
 			rightFall = current
 			break
-		elif (grid[y][current]=='.' or grid[y][current]=='|') and grid[y+1][current]=='|':
+		elif grid[y+1][current]=='|':
 			grid[y][x]='|'
 			return None,None,None,None
 		else:
-			print "why %s,%s" % (str(current), str(y))
-			quit()
+			current+=1
 	return left, right, leftFall, rightFall
 
-sources = []
+sources = [(500,0)]
 
 def nextSource():
 	global sources
@@ -75,14 +69,12 @@ def nextSource():
 		while sources and not found:
 			x,y = sources[0]
 			sources = sources[1:]
-			found = grid[y][x] == '|'
+			found = grid[y][x] != '~'
 			if found:
 				return x,y,success
 	return None, None, True
 
-y = 0
-x = 500
-success = False
+x,y,success = nextSource()
 while not success:
 	y+=1
 	if y==max(coordsy):
